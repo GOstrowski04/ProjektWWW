@@ -6,6 +6,13 @@
 	border: 3px solid black;
 	box-sizing: border-box;
 }
+footer {
+	background-color: #D9BA8C;
+	text-align: center;
+	margin:0;
+	padding: 0;
+	overflow-x: hidden;
+}
 h1 {
 	color: black;
 	font-size: 26px;
@@ -84,4 +91,7 @@ img {
 	margin-left: 90px;
 	margin-top: 100px;
 	font-size: 24px;
+}
+#ent1 {
+	margin-right: 60px;
 }

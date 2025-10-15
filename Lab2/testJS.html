@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="Projekt1.css" />
+<title> Największe statki wodne świata. </title>
+<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<meta name="description" content="Projekt 1">
+<meta name="keywords" content="HTML5, CSS3, JavaScript">
+<meta name="author" content="Gabriel Ostrowski">
+<script src="kolorujtlo.js" type="text/javascript"></script>
+<script src="timedate.js" type="text/javascript"></script>
+</head>
+<body onload="startclock()">
+	<div id="Menu">
+		<h1>Największe statki wodne na świecie.</h1>
+		<div id="zegarek"></div>
+		<div id="data"></div>
+		<nav>
+			<ul>
+				<li><a href="iconoftheseas.html">Icon of the Seas</a></li>
+				<li><a href="knocknevis.html">TT Knock Nevis</a></li>
+				<li><a href="mscirina.html">MSC Irina</a></li>
+				<li><a href="arktika.html">Arktika</a></li>
+				<li><a href="USSEnterprise.html">USS Enterprise</a></li>
+			</ul>
+		</nav>	
+		<FORM METHOD="POST" NAME="background">
+			<INPUT TYPE ="button" VALUE="żółty" onclick="changeBackground('#FFF000')">
+			<INPUT TYPE ="button" VALUE="czarny" onclick="changeBackground('#000000')">
+			<INPUT TYPE ="button" VALUE="biały" onclick="changeBackground('#FFFFFF')">
+			<INPUT TYPE ="button" VALUE="zielony" onclick="changeBackground('#00FF00')">
+			<INPUT TYPE ="button" VALUE="niebieski" onclick="changeBackground('#0000FF')">
+			<INPUT TYPE ="button" VALUE="pomarańczowy" onclick="changeBackground('#FF8000')">
+			<INPUT TYPE ="button" VALUE="szary" onclick="changeBackground('#c0c0c0')">
+			<INPUT TYPE ="button" VALUE="czerwony" onclick="changeBackground('#FF0000')">
+			<INPUT TYPE ="button" VALUE="Tryb nocny" onclick="nightMode()">
+		</FORM>
+	</div>
+<div id="Strona">
+		<h2>Icon of the Seas</h2>
+		<div id="Main">
+			<img src="images/icon.jpeg" id="icon1">
+			<ul>
+			    <li><b> Rok ukończenia: </b>2023</li>
+				<li><b> Koszt: </b> 1,86 miliarda euro </li>
+				<li><b> Typ statku: </b> pasażerski </li>
+				<li><b> Pojemność: </b> 248,663 GT </li>
+				<li><b> Długość: </b> 364,75 metrów </li>
+				<li><b> Szerokość: </b> 48,47 metrów </li>
+			</ul>
+				<div id="Opis">
+				<p><b>Icon of the Seas</b> to największy statek pasażerski na świecie.
+				Należy do klasy statków Icon class oraz linii Royal Caribbean International, jest używany do rejsów po Karaibach, a jego port macierzysty znajduje się w Miami.
+				Potrafi pomieścić maksymnie 7600 pasażerów, a jego załoga liczy około 2350 osób.
+				Jest podzielony na siedem dzielnic:</p>
+				<ol>
+					<li><b>Aquadome: </b> teatr wodny pod szklaną kopułą na szczycie statku.</li>
+					<li><b>Thrill Island: </b> największy park wodny na morzu.</li>
+					<li><b>Chill Island: </b>strefa relaksacji.</li>
+					<li><b>The Hideaway: </b>strefa tylko dla dorosłych na tyle statku.</li>
+					<li><b>Surfside: </b>dzielnica zaprojektowana z myślą o rodzinach z dziećmi.</li>
+					<li><b>Central Park: </b>ogród leżący w środku statku.</li>
+					<li><b>Royal Promenade: </b>centrum statku zawierające sklepy, kluby i restauracje.</li>
+				</ol>
+				</div>
+			<img src="images/icon2.jpg" id="icon2">
+		</div>
+	</div>
+</body>

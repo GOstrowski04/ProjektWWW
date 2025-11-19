@@ -1,11 +1,9 @@
 <?php
 error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 /* po tym komentarzu będzie kod do dynamicznego ładowania stron */
-if($_GET['idp'] == '') $strona = 'html/iconoftheseas.html';
-if($_GET['idp'] == 'knocknevis') $strona = 'html/knocknevis.html';
-if($_GET['idp'] == 'mscirina') $strona = 'html/mscirina.html';
-if($_GET['idp'] == 'arktika') $strona = 'html/arktika.html';
-if($_GET['idp'] == 'USSEnterprise') $strona = 'html/USSEnterprise.html';
+include('cfg.php');
+include('showpage.php');
+$alias = (isset($_GET['idp']) && $_GET['idp'] != '') ? $_GET['idp'] : 'iconoftheseas';
 ?>
 <!DOCTYPE html>
 
@@ -29,20 +27,23 @@ if($_GET['idp'] == 'USSEnterprise') $strona = 'html/USSEnterprise.html';
 				<li><a href="index.php?idp=mscirina">MSC Irina</a></li>
 				<li><a href="index.php?idp=arktika">Arktika</a></li>
 				<li><a href="index.php?idp=USSEnterprise">USS Enterprise</a></li>
+				<li><a href="index.php?idp=Filmy">Filmy</a></li>
 			</ul>
 		</nav>	
 	</div>
-	<?php include($strona);
-	if (!file_exists($strona)) {
-    echo "<p style='color:red;'>BŁĄD: plik $strona nie istnieje!</p>";
-} ?>
+	<?php
+    echo PokazPodstrone($alias, $link);
+    ?>
 <footer>
 	<p> <b>E-Mail:</b> 175324@student.uwm.edu.pl</p>
 </footer>
 <?php
 $nr_indeksu = '175324';
 $nrGrupy = 'ISI3';
+$APP_VERSION = '1.5';
 echo 'Autor: Gabriel Ostrowski '.$nr_indeksu.' grupa '.$nrGrupy.' <br /><br />';
+echo 'Wersja aplikacji: v' .$APP_VERSION;
 ?>
+
 </body>
 </html>

@@ -3,6 +3,8 @@ error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 /* po tym komentarzu będzie kod do dynamicznego ładowania stron */
 include('cfg.php');
 include('showpage.php');
+include('contact.php');
+
 $alias = (isset($_GET['idp']) && $_GET['idp'] != '') ? $_GET['idp'] : 'iconoftheseas';
 ?>
 <!DOCTYPE html>

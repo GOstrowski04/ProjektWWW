@@ -1,4 +1,5 @@
 <?php
+include_once "../contact.php";
 session_start();
 
 
@@ -23,8 +24,15 @@ function FormularzLogowania()
         <table class="logowanie">
          <tr><td class="log4_t">[email]</td><td><input type="text" name="login_email" class="logowanie" /></td></tr>
          <tr><td class="log4_t">[haslo]</td><td><input type="password" name="login_pass" class="logowanie" /></td></tr>
-         <tr><td>&nbsp;</td><td><input type="submit" name="x1_submit" class="logowanie" value="Zaloguj" /></td></tr>
+         <tr><td>&nbsp;</td>
+            <td>
+            <input type="submit" name="x1_submit" class="logowanie" value="Zaloguj" />
+        </td> 
+        </tr>
         </table>
+       </form>
+       <form method="post" action="'.$_SERVER['REQUEST_URI'].'">
+           <input type="submit" name="przypomnij" value="Przypomnij hasło" class="logowanie" />
        </form>
       </div>
      </div>
@@ -42,6 +50,13 @@ if (!isset($_SESSION['zalogowany']) || $_SESSION['zalogowany'] !== true) {
         } else {
             $blad = '<p style="color:red">Błędny login lub hasło!</p>';
         }
+}
+}
+if (!isset($_SESSION['zalogowany']) || $_SESSION['zalogowany'] !== true) {
+    if (isset($_POST['przypomnij'])) {
+        PrzypomnijHaslo();
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit();
     }
 }
 

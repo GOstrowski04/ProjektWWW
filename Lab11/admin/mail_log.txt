@@ -1,0 +1,16 @@
+OD: system@twojastrona.pl
+DO: gabrielostrowski2004@gmail.com
+TEMAT: Przypomnienie hasła do panelu administracyjnego
+TRESC:
+Twoje dane logowania:
+Login: admin
+Hasło: password
+
+OD: system@twojastrona.pl
+DO: admin@gmail.com
+TEMAT: Przypomnienie hasła do panelu administracyjnego
+TRESC:
+Twoje dane logowania:
+Login: admin
+Hasło: password
+

@@ -1,8 +1,5 @@
 <?php
-error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
-include('cfg.php');
-include('showpage.php');
-include('contact.php');
+include_once "contact.php";
 
 $alias = (isset($_GET['idp']) && $_GET['idp'] != '') ? $_GET['idp'] : 'iconoftheseas';
 
@@ -13,25 +10,16 @@ if ($result) {
     $pages = $result->fetch_all(MYSQLI_ASSOC);
 }
 ?>
-
 <!DOCTYPE html>
-
-<html>
+<html lang="pl">
 <head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="css/Projekt1.css" />
-<title> Największe statki wodne świata. </title>
-<link rel="icon" type="image/x-icon" href="img/favicon.ico">
-<meta name="description" content="Projekt 1">
-<meta name="keywords" content="HTML5, CSS3, JavaScript">
-<meta name="author" content="Gabriel Ostrowski">
-<script src="js/kolorujtlo.js" type="text/javascript"></script>
-<script src="js/timedate.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="js/animacje.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <title>Kontakt</title>
+    <link rel="stylesheet" href="css/Projekt1.css">
+    <script src="js/kolorujtlo.js" type="text/javascript"></script>
 </head>
 <body>
-	<div id="Menu">
+<div id="Menu">
 		<h1>Największe statki wodne na świecie.</h1>
 		<nav>
 			<ul>
@@ -58,18 +46,44 @@ if ($result) {
 			<INPUT TYPE ="button" VALUE="czerwony" onclick="changeBackground('#FF0000')">
 		</FORM>
 	</div>
-	<?php
-    echo PokazPodstrone($alias, $link);
-    ?>
-	<?php
-$nr_indeksu = '175324';
-$nrGrupy = 'ISI3';
-echo 'Autor: Gabriel Ostrowski '.$nr_indeksu.' grupa '.$nrGrupy.' <br /><br />';
-?>
+<div class="kontakt">
+
+    <h1 class="kontakt__title">Skontaktuj się z nami</h1>
+
+    <div class="kontakt__box">
+
+        <?php
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wyslij_kontakt'])) {
+
+            $success = WyslijMailKontakt(
+                'gabrielostrowski2004@gmail.com',
+                $_POST['temat'],
+                $_POST['tresc'],
+                $_POST['email']
+            );
+            if ($success) {
+                header("Location: kontakt.php?sent=1");
+            } else {
+                header("Location: kontakt.php?sent=0");
+            }
+            exit;
+        }
+
+        if (isset($_GET['sent'])) {
+            if ($_GET['sent'] == 1) {
+                echo '<p class="success">Wiadomość została wysłana</p>';
+            } else {
+                echo '<p class="error">Wystąpił błąd podczas wysyłania</p>';
+            }
+        }
+        echo PokazKontakt();
+        ?>
+
+    </div>
+
+</div>
 <footer>
 	<p> <b>E-Mail:</b> 175324@student.uwm.edu.pl</p>
 </footer>
-
-
 </body>
 </html>

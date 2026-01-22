@@ -1,0 +1,131 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+.admin-nav {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.admin-nav__title {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.admin-nav__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.admin-nav__menu li {
+}
+
+.admin-nav__menu li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.admin-nav__menu li a:hover {
+    background-color: #34495e;
+}
+
+.admin-nav__logout {
+    margin-left: auto;
+    background-color: #c0392b;
+    padding: 6px 12px;
+}
+
+.admin-nav__logout:hover {
+    background-color: #e74c3c;
+}
+
+.cms {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background: #1f2937;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 6px;
+}
+
+.sidebar a:hover {
+    background: #374151;
+    color: #fff;
+}
+
+.main {
+    flex: 1;
+    padding: 30px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,.05);
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    text-align: left;
+    background: #f1f5f9;
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc2626;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}

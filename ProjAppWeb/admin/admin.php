@@ -1,18 +1,7 @@
 <?php
+include_once "../cfg.php";
 include_once "../contact.php";
 session_start();
-
-
-$login = 'admin';
-$pass = 'password';
-
-
-$mysqli = new mysqli("localhost", "root", "", "moja_strona");
-
-if ($mysqli->connect_errno) {
-    die("Błąd połączenia z bazą: " . $mysqli->connect_error);
-}
-
 
 function FormularzLogowania()
 {
@@ -22,7 +11,7 @@ function FormularzLogowania()
       <div class="logowanie">
        <form method="post" name="LoginForm" enctype="multipart/form-data" action="'.$_SERVER['REQUEST_URI'].'">
         <table class="logowanie">
-         <tr><td class="log4_t">[email]</td><td><input type="text" name="login_email" class="logowanie" /></td></tr>
+         <tr><td class="log4_t">[login]</td><td><input type="text" name="login_email" class="logowanie" /></td></tr>
          <tr><td class="log4_t">[haslo]</td><td><input type="password" name="login_pass" class="logowanie" /></td></tr>
          <tr><td>&nbsp;</td>
             <td>
@@ -54,7 +43,7 @@ if (!isset($_SESSION['zalogowany']) || $_SESSION['zalogowany'] !== true) {
 }
 if (!isset($_SESSION['zalogowany']) || $_SESSION['zalogowany'] !== true) {
     if (isset($_POST['przypomnij'])) {
-        PrzypomnijHaslo();
+        PrzypomnijHaslo($login, $pass);
         header("Location: " . $_SERVER['REQUEST_URI']);
         exit();
     }
@@ -66,149 +55,151 @@ if (!isset($_SESSION['zalogowany']) || $_SESSION['zalogowany'] !== true) {
     exit();
 }
 
-function ListaPodstron($mysqli) {
-    $query = "SELECT * FROM page_list ORDER BY id ASC LIMIT 100";
-    $result = $mysqli->query($query);
-
-    if (!$result) {
-        echo "<p style='color:red'>Błąd zapytania: " . $mysqli->error . "</p>";
-        return;
-    }
-
-    while($row = $result->fetch_assoc()) {
-        echo $row['id'].' '.$row['page_title'].' <br />';
-    }
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: admin.php");
+    exit;
 }
 
-function EdytujPodstrone($mysqli, $id) {
-    $id = intval($id);
-    $stmt = $mysqli->prepare("SELECT * FROM page_list WHERE id = ? LIMIT 1");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+function listaPodstron($db) {
+    $res = mysqli_query($db, "SELECT * FROM page_list ORDER BY id DESC");
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
+}
 
-    if (!$result || $result->num_rows == 0) {
-        return "<p>Nie znaleziono podstrony o podanym ID.</p>";
-    }
-
-    $row = $result->fetch_assoc();
-    $checked = ($row['status'] == 1) ? "checked" : "";
-
-    $form = '
-    <h2>Edytuj podstronę</h2>
-    <form method="post" action="">
-        <label>Tytuł:</label><br>
-        <input type="text" name="tytul" value="'.htmlspecialchars($row['page_title']).'" style="width:300px"><br><br>
-
-        <label>Treść strony:</label><br>
-        <textarea name="tresc" rows="10" cols="60">'.htmlspecialchars($row['page_content']).'</textarea><br><br>
-
-        <label>
-            <input type="checkbox" name="aktywna" value="1" '.$checked.'>
-            Strona aktywna
-        </label><br><br>
-
-        <input type="submit" name="zapisz_podstrone" value="Zapisz zmiany">
-    </form>
-    ';
-
-
-    if (isset($_POST['zapisz_podstrone'])) {
-        $tytul = $_POST['tytul'];
-        $tresc = $_POST['tresc'];
-        $aktywna = isset($_POST['status']) ? 1 : 0;
-
-        $stmt_update = $mysqli->prepare("UPDATE page_list SET tytul=?, tresc=?, aktywna=? WHERE id=?");
-        $stmt_update->bind_param("ssii", $tytul, $tresc, $aktywna, $id);
-        if ($stmt_update->execute()) {
-            echo "<p style='color:green'>Zmiany zapisane!</p>";
-        } else {
-            echo "<p style='color:red'>Błąd podczas zapisu.</p>";
-        }
-    }
-
-    return $form;
+function edytujPodstrone($db, $id, $d) {
+    $stmt = mysqli_prepare($db, "
+        UPDATE page_list
+        SET page_title=?, page_content=?, status=?, alias=?
+        WHERE id=?
+    ");
+    mysqli_stmt_bind_param($stmt, "ssisi",
+        $d['title'], $d['content'], $d['status'], $d['alias'], $id
+    );
+    return mysqli_stmt_execute($stmt);
 }
 
 
-function DodajNowaPodstrone($mysqli) {
-    if (isset($_POST['dodaj_podstrone'])) {
-        $tytul = $_POST['tytul'];
-        $tresc = $_POST['tresc'];
-        $aktywna = isset($_POST['aktywna']) ? 1 : 0;
-
-        $stmt = $mysqli->prepare("INSERT INTO page_list (tytul, tresc, aktywna, data) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("ssi", $tytul, $tresc, $aktywna);
-
-        if ($stmt->execute()) {
-            echo "<p style='color:green;'>Podstrona została dodana poprawnie.</p>";
-        } else {
-            echo "<p style='color:red;'>Błąd podczas dodawania podstrony.</p>";
-        }
-    }
-
-    $form = '
-    <h2>Dodaj nową podstronę</h2>
-    <form method="post" action="">
-        <label>Tytuł:</label><br>
-        <input type="text" name="tytul" value="" style="width:300px"><br><br>
-
-        <label>Treść strony:</label><br>
-        <textarea name="tresc" rows="10" cols="60"></textarea><br><br>
-
-        <label>
-            <input type="checkbox" name="aktywna" value="1">
-            Strona aktywna
-        </label><br><br>
-
-        <input type="submit" name="dodaj_podstrone" value="Dodaj podstronę">
-    </form>
-    ';
-
-    return $form;
+function dodajPodstrone($db, $d) {
+    $stmt = mysqli_prepare($db, "
+        INSERT INTO page_list (page_title, page_content, status, alias)
+        VALUES (?, ?, ?, ?)
+    ");
+    mysqli_stmt_bind_param($stmt, "ssis",
+        $d['title'], $d['content'], $d['status'], $d['alias']
+    );
+    return mysqli_stmt_execute($stmt);
 }
 
 
-function UsunPodstrone($mysqli, $id) {
-    $id = intval($id);
-    if ($id <= 0) {
-        return "<p style='color:red;'>Nieprawidłowe ID podstrony.</p>";
-    }
+function usunPodstrone($db, $id) {
+    $stmt = mysqli_prepare($db, "DELETE FROM page_list WHERE id=? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    return mysqli_stmt_execute($stmt);
+}
 
-    $stmt = $mysqli->prepare("DELETE FROM page_list WHERE id=? LIMIT 1");
-    $stmt->bind_param("i", $id);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'])) {
 
-    if ($stmt->execute()) {
-        return "<p style='color:green;'>Podstrona została usunięta.</p>";
+    $data = [
+        'title'   => $_POST['title'],
+        'alias'   => $_POST['alias'],
+        'content' => $_POST['content'],
+        'status'  => isset($_POST['status']) ? 1 : 0
+    ];
+
+    if (!empty($_POST['id'])) {
+        edytujPodstrone($link, (int)$_POST['id'], $data);
     } else {
-        return "<p style='color:red;'>Błąd podczas usuwania podstrony.</p>";
-    }
-}
-
-function FormularzUsuwania($mysqli) {
-    $wynik = '';
-    if (isset($_POST['usun_podstrone_submit'])) {
-        $id_do_usuniecia = intval($_POST['usun_id']);
-        $wynik .= UsunPodstrone($mysqli, $id_do_usuniecia);
+        dodajPodstrone($link, $data);
     }
 
-    $wynik .= '
-    <h2>Usuń podstronę</h2>
-    <form method="post" action="">
-        <label>Wpisz ID podstrony do usunięcia:</label><br>
-        <input type="number" name="usun_id" style="width:100px" required>
-        <input type="submit" name="usun_podstrone_submit" value="Usuń podstronę">
-    </form>
-    ';
-
-    return $wynik;
+    header("Location: admin.php");
+    exit;
 }
 
-echo "<h1>Panel CMS</h1>";
-echo "<h2>Lista podstron:</h2>";
-ListaPodstron($mysqli);
+if (isset($_GET['delete'])) {
+    usunPodstrone($link, (int)$_GET['delete']);
+    header("Location: admin.php");
+    exit;
+}
 
-echo DodajNowaPodstrone($mysqli);
-echo EdytujPodstrone($mysqli, 1);
-echo FormularzUsuwania($mysqli);
+$pages = listaPodstron($link);
+
+$edit_data = null;
+if (isset($_GET['edit'])) {
+    foreach ($pages as $p) {
+        if ($p['id'] == $_GET['edit']) {
+            $edit_data = $p;
+            break;
+        }
+    }
+}
 ?>
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>CMS – Pages</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-nav">
+    <h1 class="admin-nav__title">Panel CMS</h1>
+    <ul class="admin-nav__menu">
+        <li><a href="admin.php">Strony</a></li>
+        <li><a href="category.php">Kategorie</a></li>
+        <li><a href="product.php">Produkty</a></li>
+        <li><a href="?logout=1">Wyloguj</a></li>
+    </ul>
+</div>
+<h1>CMS – Zarządzanie podstronami</h1>
+
+<form method="post">
+    <input type="hidden" name="id" value="<?= $edit_data['id'] ?? '' ?>">
+
+    Tytuł:<br>
+    <input type="text" name="title" value="<?= $edit_data['page_title'] ?? '' ?>" required><br><br>
+
+    Alias:<br>
+    <input type="text" name="alias" value="<?= $edit_data['alias'] ?? '' ?>" required><br><br>
+
+    Treść:<br>
+    <textarea name="content" rows="8" required><?= $edit_data['page_content'] ?? '' ?></textarea><br><br>
+
+    <label>
+        Strona aktywna
+        <input type="checkbox" name="status" <?= !empty($edit_data['status']) ? 'checked' : '' ?>>
+    </label><br><br>
+
+    <input type="submit" value="<?= $edit_data ? 'Zapisz zmiany' : 'Dodaj podstronę' ?>">
+</form>
+
+<h2>Lista podstron</h2>
+<table border="1" cellpadding="5">
+<tr>
+    <th>ID</th>
+    <th>Tytuł</th>
+    <th>Alias</th>
+    <th>Status</th>
+    <th>Akcje</th>
+</tr>
+
+<?php foreach ($pages as $p): ?>
+<tr>
+    <td><?= $p['id'] ?></td>
+    <td><?= htmlspecialchars($p['page_title']) ?></td>
+    <td><?= htmlspecialchars($p['alias']) ?></td>
+    <td><?= $p['status'] ? 'Aktywna' : 'Ukryta' ?></td>
+    <td>
+        <a href="?edit=<?= $p['id'] ?>">Edytuj</a> |
+        <a href="?delete=<?= $p['id'] ?>" onclick="return confirm('Usunąć?')">Usuń</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+
+</table>
+
+<p><a href="?logout=1">Wyloguj</a></p>
+
+</body>
+</html>

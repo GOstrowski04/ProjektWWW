@@ -1,4 +1,5 @@
 <?php
+/// Funkcja służąca do wyświetlania podstron z bazy danych
 function PokazPodstrone($alias, $link)
 {
     $alias_clear = mysqli_real_escape_string($link, $alias);

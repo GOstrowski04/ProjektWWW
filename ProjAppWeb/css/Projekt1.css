@@ -10,9 +10,8 @@
 	background-color: black;
 	color: white;
 }
-.logowanie {
 
-}
+
 footer {
 	background-color: #D9BA8C;
 	text-align: center;
@@ -126,4 +125,59 @@ img {
 	-moz-user-select:none;
 	-ms-user-select:none;
 	user-select:none;
+}
+.kontakt {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+}
+
+.kontakt__title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.kontakt__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.kontakt__label {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+}
+
+.kontakt__input,
+.kontakt__textarea {
+    padding: 8px;
+    border: 1px solid #aaa;
+    font-size: 14px;
+}
+
+.kontakt__button {
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.kontakt__button:hover {
+    background: #555;
+}
+
+.kontakt__success {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+}
+
+.kontakt__error {
+    color: red;
+    text-align: center;
+    font-weight: bold;
 }

@@ -1,4 +1,12 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require_once __DIR__ . '/includes/PHPMailer/src/Exception.php';
+require_once __DIR__ . '/includes/PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/includes/PHPMailer/src/SMTP.php';
+/// Funkcja wyświetlająca formularz kontaktowy.
+include_once "cfg.php";
 function PokazKontakt(){
     $formularz = '
     <h2>Formularz kontaktowy</h2>
@@ -22,52 +30,46 @@ function PokazKontakt(){
 
     return $formularz;
 }
-function WyslijMailKontakt($odbiorca){
-if(empty($_POST['temat']) || empty($_POST['tresc']) || empty($_POST['email']))
-{
-    echo '[nie_wypelniles_pola]';
-    echo PokazKontakt();
-}
-else
-{
-    $mail['subject'] = $_POST['temat'];
-    $mail['body'] = $_POST['tresc'];
-    $mail['sender'] = $_POST['email'];
-    $mail['reciptient'] = $odbiorca;
+// funkcja wysyłająca mail
+function WyslijMailKontakt($odbiorca, $temat, $tresc) {
+    $mail = new PHPMailer(true);
 
-    $header = "From: Formularz kontaktowy <".$mail['sender'].">\n";
-    $header .= "MIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\nContent-Transfer-Encoding:\n";
-    $header .= "X-Sender: <".$mail['sender'].">\n";
-    $header .= "X-Mailer: PRapWWW mail 1.2\n";
-    $header .= "X-Priority: 3\n";
-    $header .= "Return-Path: <".$mail['sender'].">\n";
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'gabrielostrowski2004@gmail.com';
+        $mail->Password   = 'ducwrftnulsdjpyf';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
 
-    //mail($mail['reciptient'],$mail['subject'],$mail['body'],$header);
-    file_put_contents("mail_log.txt",
-    "OD: ".$mail['sender']."\n".
-    "DO: ".$mail['reciptient']."\n".
-    "TEMAT: ".$mail['subject']."\n".
-    "TRESC:\n".$mail['body']."\n\n",
-    FILE_APPEND
-);
-    echo '[wiadomosc_wyslana]';
-}
-}
-function PrzypomnijHaslo(){
-    include_once "cfg.php";
-    $odbiorca = "gabrielostrowski2004@gmail.com";
+        $mail->setFrom('gabrielostrowski2004@gmail.com', 'Formularz kontaktowy');
+        $mail->addAddress($odbiorca);
 
+        $mail->isHTML(false);
+        $mail->Subject = $temat;
+        $mail->Body    = $tresc;
+
+        $mail->send();
+        return true;
+
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+/// Funkcja wysyłająca hasło na podany adres email.
+function PrzypomnijHaslo($login, $pass){
+    $odbiorca = "gabrielOstrowski2004@gmail.com";
     $_POST['temat'] = "Przypomnienie hasła do panelu administracyjnego";
     $_POST['tresc'] = "Twoje dane logowania:\nLogin: $login\nHasło: $pass";
     $_POST['email'] = "system@twojastrona.pl";
-    WyslijMailKontakt($odbiorca);
+    WyslijMailKontakt(
+                'gabrielostrowski2004@gmail.com',
+                $_POST['temat'],
+                $_POST['tresc'],
+                $_POST['email']
+            );
 
     return '<p style="color:green">Hasło zostało wysłane na adres administratora.</p>';
 }
-
-if (isset($_POST['wyslij_kontakt'])) {
-    WyslijMailKontakt("gabrielostrowski2004@gmail.com");
-} else {
-    echo PokazKontakt();
-}
-?>
